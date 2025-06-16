@@ -1,4 +1,4 @@
-// config
+// --- CONFIG ---
 const clientId = '23cd83a8778d4274a8721e203c4dba70';
 const redirectUri = window.location.origin + window.location.pathname;
 let accessToken = null;
@@ -9,10 +9,10 @@ let playerAudio = null;
 let currentTrackIndex = 0;
 let animeTracksLoaded = false;
 
-// spa
+// spa navigation
 let currentRoute = 'home';
 
-// PKCE spotify
+// spotify login
 async function generateCodeChallenge(codeVerifier) {
   const encoder = new TextEncoder();
   const data = encoder.encode(codeVerifier);
@@ -103,7 +103,7 @@ function setupPlayerEventListeners() {
       }
     };
   }
-  // Volume
+  // controle de volume
   const volumeControl = document.getElementById('volume-control');
   if (volumeControl) {
     volumeControl.addEventListener('input', function () {
@@ -120,6 +120,7 @@ function setupPlayerEventListeners() {
   }
 }
 
+// pesquisa
 const OTAKU_TERMS = [
   "anime opening", "anime ending", "anime ost", "anime soundtrack", "anime instrumental", "anisong",
   "anime battle", "anime remix", "anime cover", "anime theme", "anime version",
@@ -188,7 +189,7 @@ async function loadOtakuTracksGrid(userQuery) {
   }
 }
 
-// spa views
+// spa
 function showHome() {
   currentRoute = 'home';
   document.getElementById('mainHeader').style.display = 'flex';
@@ -235,7 +236,7 @@ function showExplore() {
             <i class="fas fa-search" id="animeSearchBtn" style="cursor:pointer; font-size:1.1em;"></i>
           </div>
           <div class="music-nav-user">
-            <span>${user.display_name || 'usuário'}</span>
+            <span>${user?.display_name?.split(' ')[0] || "usuário"}</span>
             <img class="user-avatar" src="${user?.images?.[0]?.url || 'https://ui-avatars.com/api/?name=AnimeBeat'}" alt="Avatar">
           </div>
         </div>
@@ -250,7 +251,7 @@ function showExplore() {
   // Busca inicial padrão
   loadOtakuTracksGrid("anime musicas");
 
-  // busca musica ao clicar enter ou na lupa
+  // Busca APENAS ao pressionar Enter ou clicar na lupa
   const searchInput = document.getElementById('animeTrackSearchInput');
   const searchBtn = document.getElementById('animeSearchBtn');
   let lastSearch = searchInput.value.trim() || "anime musicas";
@@ -290,6 +291,7 @@ function renderAnimeTracksGrid(tracks) {
       </div>
     `;
   }
+
   const minCol = 2;
   if (tracks.length < minCol) {
     for (let j = tracks.length; j < minCol; j++) {
@@ -416,10 +418,10 @@ async function loadSpotifyProfile() {
   setupUserAvatarMenu();
 }
 
+// popup
 function showUserMenu(anchorElement) {
   const existing = document.getElementById('userMenuPopup');
   if (existing) {
-    // animação de saída
     existing.classList.add('menu-exit');
     setTimeout(() => existing.remove(), 170);
     return;
@@ -457,7 +459,6 @@ function showUserMenu(anchorElement) {
   menu.style.left = `${left}px`;
   menu.style.top = `${top}px`;
 
-  // eventos
   document.getElementById('goProfileBtn').onclick = () => {
     if (user && user.external_urls && user.external_urls.spotify) {
       window.open(user.external_urls.spotify, '_blank');
@@ -472,9 +473,11 @@ function showUserMenu(anchorElement) {
     animeTracks = [];
     animeTracksLoaded = false;
     menu.classList.add('menu-exit');
-    setTimeout(() => menu.remove(), 170);
+    setTimeout(() => {
+      menu.remove();
+      window.location.href = window.location.origin + window.location.pathname;
+    }, 170);
     removePlayer();
-    showHome();
   };
 
   // fecha se clicar fora
