@@ -73,6 +73,10 @@ header {
 .user-info {
   display: flex;
   align-items: center;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.2);
+  margin-right: 10px;
 }
 
 .user-info span {
@@ -169,7 +173,7 @@ main {
   position: fixed;
   top: 0;
   left: 0;
-  background: linear-gradient(180deg, #160075 0%, #220082 100%);
+  background: linear-gradient(180deg, #160075 0%, #000000 100%);
   z-index: 10000;
   display: flex;
   flex-direction: row;
@@ -227,6 +231,7 @@ main {
   display: flex;
   align-items: center;
   gap: 14px;
+  margin-top: 18px;
 }
 .music-nav-user span {
   font-size: 19px;
@@ -271,13 +276,15 @@ main {
   align-items: center;
   width: 152px;
   cursor: pointer;
-  background: none;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 10px;
   transition: transform .16s;
 }
 
 .music-track-card:hover {
   transform: translateY(-3px) scale(1.035);
-  box-shadow: 0 3px 16px #0006;
+  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.4);
 }
 
 .music-track-card .cover {
@@ -287,7 +294,7 @@ main {
   object-fit: cover;
   margin-bottom: 8px;
   border: 2px solid var(--accent);
-  box-shadow: 0 2px 14px #00ffb22a;
+  box-shadow: 0 2px 14px #00ffb32a;
   transition: border-color 0.16s, box-shadow 0.16s;
 }
 .music-track-card:hover .cover {
@@ -326,7 +333,7 @@ main {
   max-width: 790px;
   min-height: 72px;
   background: linear-gradient(90deg, #1a1240 60%, #221c50 100%);
-  box-shadow: 0 10px 32px #00ffb244, 0 -2px 16px #0003;
+  box-shadow: 0 0px 32px #1a1240;
   z-index: 11000;
   display: flex;
   align-items: center;
@@ -416,20 +423,18 @@ main {
 .volume-container {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 7px;
   min-width: 80px;
   max-width: 150px;
   margin-left: 12px;
   margin-right: 4px;
 }
-
 #volume-icon {
   color: var(--accent);
   font-size: 20px;
   display: flex;
   align-items: center;
 }
-
 #volume-control {
   appearance: none;
   width: 92px;
@@ -440,7 +445,16 @@ main {
   cursor: pointer;
   transition: background 0.16s;
 }
-#volume-control::-webkit-slider-thumb,
+#volume-control::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--accent);
+  box-shadow: 0 2px 6px #0003;
+  cursor: pointer;
+  margin-top: -5px;
+}
 #volume-control::-moz-range-thumb {
   width: 18px;
   height: 18px;
@@ -466,47 +480,6 @@ main {
 }
 #volume-control::-ms-tooltip {
   display: none;
-}
-
-/* Lyrics panel */
-.lyrics-toggle button {
-  background: var(--bg-dark);
-  border: none;
-  color: var(--accent);
-  font-size: 22px;
-  cursor: pointer;
-  margin-left: 18px;
-  border-radius: 50%;
-  padding: 6px 12px;
-  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
-}
-.lyrics-toggle button:hover {
-  color: var(--accent-hover);
-  background: #1a1e36;
-  box-shadow: 0 4px 13px #4ed2fa44;
-}
-
-#lyrics-panel {
-  position: fixed;
-  bottom: 110px;
-  right: 32px;
-  min-width: 320px;
-  max-width: 520px;
-  background: rgba(30,16,80,0.96);
-  color: #fff;
-  border-radius: 14px;
-  box-shadow: 0 4px 30px #0008;
-  z-index: 12000;
-  padding: 24px 32px 20px;
-  display: flex;
-  flex-direction: column;
-  opacity: 1;
-  pointer-events: all;
-  transition: opacity .25s;
-}
-#lyrics-panel.hidden {
-  opacity: 0;
-  pointer-events: none;
 }
 
 /* --- Menu Popup do Usuário --- */
@@ -557,104 +530,98 @@ main {
 }
 
 /* --- Responsividade --- */
-@media (max-width: 1200px) {
-  .container {
-    padding: 18px 2vw;
-  }
-  .music-nav-main {
-    padding-left: 1vw;
-  }
-  .music-nav-search {
-    width: 95vw;
-    max-width: 420px;
-  }
-}
-@media (max-width: 900px) {
-  .container {
-    padding: 10px 2vw;
-  }
-  .music-nav-fullscreen {
-    flex-direction: column;
-  }
-  .music-nav-main {
-    padding-left: 2vw;
-  }
-  .music-track-card {
-    width: 35vw;
-    min-width: 100px;
-    max-width: 150px;
-  }
-  #player {
-    padding: 0 8vw;
-    max-width: 100vw;
-    left: 50%;
-    bottom: 20px;
-    border-radius: 18px;
-  }
-  .controls {
-    min-width: 140px;
-    max-width: 220px;
-  }
-}
-@media (max-width: 700px) {
-  .music-nav-header {
+
+@media (max-width: 768px) {
+  header {
     flex-direction: column;
     align-items: flex-start;
-    width: 100%;
   }
-  .music-nav-search {
+
+  .user-info {
+    margin-top: 10px;
     margin-right: 0;
-    width: 97vw;
-    max-width: 99vw;
-    margin-bottom: 12px;
   }
-  .music-nav-user {
-    margin-bottom: 6px;
-    margin-left: 2px;
+
+  .music-nav-search {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 10px;
   }
 }
+
 @media (max-width: 600px) {
   .container {
-    padding: 2vw 1vw;
+    padding: 0 !important;
+    width: 100vw;
+    min-width: 100vw;
+    box-sizing: border-box;
   }
   header {
     flex-direction: column;
     gap: 12px;
+    width: 100vw;
+    min-width: 100vw;
+    box-sizing: border-box;
   }
   main {
     justify-content: center;
-    padding-bottom: 80px;
+    padding-bottom: 90px;
   }
   .text-content h1 {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
   }
   #player {
-    flex-direction: column;
-    max-width: 99vw;
-    padding: 14px 2vw 9px;
-    border-radius: 11px;
+    max-width: 94vw;
+    width: 94vw;
+    padding: 10px 2vw 10px 2vw;
+    border-radius: 9px;
     left: 50%;
-    bottom: 8px;
-    gap: 9px;
+    bottom: 4px;
+    gap: 7px;
+    box-sizing: border-box;
   }
   #player .track-info {
-    max-width: 100vw;
-    gap: 7px;
+    max-width: 60vw;
+    gap: 4px;
+    box-sizing: border-box;
   }
   .track-text {
-    max-width: 95vw;
+    max-width: 45vw;
   }
   #track-title, #track-artist {
-    max-width: 70vw;
-    font-size: 14px;
+    max-width: 30vw;
+    font-size: 11px;
+    box-sizing: border-box;
+  }
+  #track-title {
+    font-weight: bold;
   }
   .controls {
-    min-width: 120px;
-    max-width: 170px;
-    margin: 0 auto;
+    min-width: 22px;
+    max-width: 38vw;
+    margin: 0 0 0 6px;
+    gap: 9px;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  .controls button {
+    font-size: 17px;
+    padding: 6px 9px;
+    border-radius: 50%;
+    min-width: 30px;
+    min-height: 30px;
+    max-width: 34px;
+    max-height: 34px;
+  }
+  .volume-container,
+  #volume-control,
+  #volume-icon {
+    display: none !important;
   }
   .music-track-card {
-    width: 95vw;
-    max-width: 99vw;
+    width: 90vw;
+    max-width: 94vw;
+    margin: 0 auto 8px auto;
+    box-sizing: border-box;
   }
 }

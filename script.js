@@ -52,9 +52,6 @@ function renderPlayer() {
           <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.8" title="Volume"/>
         </div>
       </div>
-      <div class="lyrics-toggle">
-        <button id="toggle-lyrics"><i class="fas fa-chevron-up"></i></button>
-      </div>
     </footer>
   `;
   document.querySelector('.container').insertAdjacentHTML('beforeend', playerHTML);
@@ -67,13 +64,6 @@ function removePlayer() {
 }
 
 function setupPlayerEventListeners() {
-  const toggleLyricsBtn = document.getElementById('toggle-lyrics');
-  if (toggleLyricsBtn) {
-    toggleLyricsBtn.onclick = () => {
-      const lyricsPanel = document.getElementById('lyrics-panel');
-      if (lyricsPanel) lyricsPanel.classList.toggle('hidden');
-    };
-  }
   const prevBtn = document.getElementById('prev');
   if (prevBtn) {
     prevBtn.onclick = () => {
@@ -112,6 +102,7 @@ function setupPlayerEventListeners() {
       }
       const volIcon = document.getElementById('volume-icon');
       if (volIcon) {
+        // Color feedback for volume
         if (this.value <= 0.01) volIcon.style.color = '#888';
         else if (this.value < 0.4) volIcon.style.color = '#f6e96b';
         else volIcon.style.color = '#2196f3';
@@ -231,9 +222,9 @@ function showExplore() {
     <div class="music-nav-fullscreen" id="musicNavMain">
       <div class="music-nav-main">
         <div class="music-nav-header">
-          <div class="music-nav-search" style="width: 370px; display: flex; align-items: center;">
-            <input type="text" placeholder="Buscar" id="animeTrackSearchInput" style="width: 100%; max-width: 320px; margin-right: 10px;"/>
-            <i class="fas fa-search" id="animeSearchBtn" style="cursor:pointer; font-size:1.1em;"></i>
+          <div class="music-nav-search">
+            <input type="text" placeholder="Buscar" id="animeTrackSearchInput"/>
+            <i class="fas fa-search" id="animeSearchBtn"></i>
           </div>
           <div class="music-nav-user">
             <span>${user?.display_name?.split(' ')[0] || "usuário"}</span>
@@ -275,6 +266,11 @@ function showExplore() {
   }, 500);
 }
 
+function truncateTitle(title, maxLength = 28) {
+  // Limita o título a maxLength caracteres, quebra em "..." se passar
+  return title.length > maxLength ? title.substring(0, maxLength - 1) + "…" : title;
+}
+
 function renderAnimeTracksGrid(tracks) {
   const grid = document.getElementById('animeTracksGrid');
   if (!tracks || tracks.length === 0) {
@@ -286,7 +282,7 @@ function renderAnimeTracksGrid(tracks) {
     html += `
       <div class="music-track-card" onclick="playThisTrack(${i})">
         <img class="cover" src="${track.album.cover_medium}" alt="${track.title}">
-        <div class="track-title">${track.title}</div>
+        <div class="track-title">${truncateTitle(track.title)}</div>
         <div class="track-artist">${track.artist.name}</div>
       </div>
     `;
@@ -300,6 +296,20 @@ function renderAnimeTracksGrid(tracks) {
   }
   html += '</div>';
   grid.innerHTML = html;
+}
+
+// lyrics API (Lyrics.ovh) via proxy para CORS
+async function fetchLyrics(artist, title) {
+  try {
+    if (!artist || !title) return null;
+    const url = `https://corsproxy.io/?https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Letra não encontrada');
+    const json = await res.json();
+    return json.lyrics ? json.lyrics.trim() : null;
+  } catch (e) {
+    return null;
+  }
 }
 
 // player
@@ -355,7 +365,16 @@ function updatePlayerUI(track) {
   if (albumCover) albumCover.src = track.album.cover_medium;
   if (trackTitle) trackTitle.textContent = track.title;
   if (trackArtist) trackArtist.textContent = track.artist.name;
-  if (lyrics) lyrics.textContent = 'Letra indisponível para prévias.';
+  if (lyrics) {
+    lyrics.textContent = 'Buscando letra...';
+    fetchLyrics(track.artist.name, track.title).then(lyric => {
+      if (lyric) {
+        lyrics.textContent = lyric;
+      } else {
+        lyrics.textContent = 'Letra indisponível para esta música.';
+      }
+    });
+  }
 }
 
 // auth spotify
